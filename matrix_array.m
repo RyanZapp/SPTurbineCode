@@ -2,7 +2,6 @@ function [finalM] = matrix_array(importfile,exportfile) % Will create an output 
 
 % Courtesy of JoshTheEngineer 
 hdrlns = 1;
-% Might have to manually make another script to run these airfoils, the other ones work
 if (strcmp(importfile,'nasasc2-0714'))
     hdrlns = 3;
 elseif (strcmp(importfile,'s1020'))
