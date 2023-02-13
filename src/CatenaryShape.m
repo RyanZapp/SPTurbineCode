@@ -2,6 +2,7 @@ clear
 close all
 clc
 % Variables that can be changed
+% The values are in imperial units from my understanding
 Chord_Lengths = [0.0762, 0.0762, 3]; % chord lengths in inches
 bladeName = 'NREL_5MW'; % Change this to match your blade name
 numberBlades = '3';
@@ -9,15 +10,15 @@ H = 1.5; % Half the height of the shaft (non-varying parameter)
 N1 = 34; % Number of airfoil segments used to approximate the blade
 S = 0.5; % Value that you scale TAxis by
 z = linspace(0,2*H,N1)';
-AR = 1.11; % Aspect Ratio...This value is eqaul to H/R;
+AR = 1.11; % Aspect Ratio...This value is eqaul to H/R; (Current is 1.11)
 R_true = H/AR;
 % End of Variables that can be changed
 
 space = ' ';
 z1 = linspace(-H,H,N1)';
 
-N2 = 5000;
-aa = linspace(1,5,N2);
+N2 = 7000;
+aa = linspace(0.01,5,N2);
 R_approx = -aa + aa.*cosh(H./aa);
 R = interp1(R_approx,R_approx,R_true,'nearest');
 for j = 1:N2
@@ -84,7 +85,7 @@ Date = datetime('now','TimeZone','local','Format','dd.MM.yyyy');
 %formatSpec = '%.5f';
 
 % Name your Blade File Below
-fid = fopen('BladeFile5.txt','w');
+fid = fopen('C:\Users\zipza\Documents\SPCode\QbladeInputFiles\BladeFile.txt','w');
 
 fprintf(fid,s1);
 fprintf(fid,'\n');
