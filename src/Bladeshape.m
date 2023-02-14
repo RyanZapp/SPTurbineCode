@@ -1,5 +1,9 @@
 function Bladeshape(outputLocation)
     % Variables that can be changed
+    % Add segLength into this function
+    segLength1 = 5;
+    segLength2 = 24;
+    segLength3 = 5;
     % The values are in imperial units from my understanding
     Chord_Lengths = [0.0762, 0.0762, 3]; % chord lengths in inches
     bladeName = 'NREL_5MW'; % Change this to match your blade name
@@ -46,10 +50,12 @@ function Bladeshape(outputLocation)
     TAxis = num2str(S*ones(N1,1));
     
     Chord = ones(N1,1);
-    
-    Chord(1:5) = Chord_Lengths(1)*Chord(1:5);
-    Chord(6:29) = Chord_Lengths(2)*Chord(6:29);
-    Chord(30:34) = Chord_Lengths(1)*Chord(30:34);
+    % I recently changed the segment length, so check to make sure that is
+    % all good to go
+    % OG numbers were 1:5, 6:29, 30:34
+    Chord(1:segLength1) = Chord_Lengths(1)*Chord(1:segLength1);
+    Chord(segLength1+1:segLength1+segLength2) = Chord_Lengths(2)*Chord(segLength1+1:segLength1+segLength2);
+    Chord(segLength1+segLength2+1:end) = Chord_Lengths(1)*Chord(segLength1+segLength2+1:end);
     %Chord(5:10) = Chord_Lengths(2)*Chord(5:10);
     %Chord(11:15) = Chord_Lengths(3)*Chord(11:15);
     
