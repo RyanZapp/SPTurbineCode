@@ -8,12 +8,12 @@ function Bladeshape(outputLocation)
     Chord_Lengths = [0.0762, 0.0762, 3]; % chord lengths in inches
     bladeName = 'NREL_5MW'; % Change this to match your blade name
     numberBlades = '3';
-    H = 1.5; % Half the height of the shaft (non-varying parameter)
+    H = 1.5; % (feet) Half the height of the shaft (non-varying parameter)
     N1 = 34; % Number of airfoil segments used to approximate the blade
     S = 0.5; % Value that you scale TAxis by
     z = linspace(0,2*H,N1)';
     AR = 1.11; % Aspect Ratio...This value is eqaul to H/R; (Current is 1.11)
-    R_true = H/AR;
+    R_true = H/AR; %Is this value in feet as well thenwe
     % End of Variables that can be changed
     
     space = ' ';
@@ -189,4 +189,5 @@ function Bladeshape(outputLocation)
     end
     % I have removed the need for a polar file, but i can add it back in if it
     % becomes necessary
+    fclose('all');
 end
