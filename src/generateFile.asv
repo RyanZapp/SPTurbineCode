@@ -574,8 +574,7 @@ function generateFile(segLength1,segLength2,bladeNodes,H,AR,ChordLength,numBlade
     % When you come back, finissh the rough main file
 
     % during the meeting, figure out if Richard's code is right
-    % get the proper airfoil output from Leon
-    % 
+    % get 
 
 
 

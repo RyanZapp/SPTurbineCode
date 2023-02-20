@@ -1,0 +1,10 @@
+
+CABELEMENTS
+ID Dens.[kg/m^3] Area[m^2] Iyy[m^4] EMod[N/m^4] RDp.[-] Dia[m]
+1 1.00   1.267e-04 1.277e-09 1.000e+00 1.00 0.01
+
+CABMEMBERS
+ID CONN_1   CONN_2    TENSION[N] CabID  Drag ElmDsc Name
+1 TRQ_1.00   GRD_1.00_2.00  1.000e+00 1  0.99 8  GuyCable1
+2 TRQ_1.00   GRD_3.00_4.00  1.000e+00 1  0.99 8  GuyCable2
+3 TRQ_1.00   GRD_5.00_6.00  1.000e+00 1  0.99 8  GuyCable3
