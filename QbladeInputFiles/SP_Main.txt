@@ -1,0 +1,130 @@
+---------------------- QBLADE STRUCTURAL MODEL INPUT FILE -----------------
+SP group 5 ft VAWT
+------------------------------- CHRONO PARAMETERS -------------------------
+0.20					GLBGEOEPS - Global geometry epsilon for node placement
+
+------------------------------- MASS AND INERTIA --------------------------
+0						HUBMASS - Hub Mass (kg)
+0						HUBINER - Hub Inertia (kg*m^2)
+
+------------------------------- DRIVETRAIN MODEL --------------------------
+1						GBRATIO - gearbox ratio (N)
+1						GBOXEFF - gearbox efficiency (0-1)
+false					DRTRDOF - model drivetrain dynamics (true / false)
+0						GENINER - Generator side (HSS) Inertia (kg*m^2)
+0						DTTORSPR - Drivetrain torsional stiffness (N*m/rad)
+0						DTTORDMP - Drivetrain torsional damping (N*m*s/rad)
+
+------------------------------- BRAKE MODEL -------------------------------
+0						BRKTORQUE - maximum brake torque (s)
+0						BRKDEPLOY - brake deploy time (s) (only used with DTU style controllers)
+0						BRKDELAY - brake delay time (s) (only used with DTU style controllers)
+
+------------------------------- SENSOR ERRORS -----------------------------
+0						ERRORPITCH_1 - pitch error blade 1 (deg)
+0						ERRORPITCH_2 - pitch error blade 2 (deg)
+0						ERRORPITCH_3 - pitch error blade 3 (deg)
+
+------------------------------- BLADES ------------------------------------
+3						NUMBLD - Number of blades
+SP_BladeStruct.txt		BLDFILE_1 - Name of file containing properties for blade 1
+SP_BladeStruct.txt		BLDFILE_2 - Name of file containing properties for blade 2
+SP_BladeStruct.txt		BLDFILE_3 - Name of file containing properties for blade 3
+
+------------------------------- STRUTS ------------------------------------
+*						STRTFILE_1 - Name of file containing properties for strut1 (if blade has struts)
+*						STRTFILE_2 - Name of file containing properties for strut2 (if blade has struts)
+*						STRTFILE_3 - Name of file containing properties for strut3 (if blade has struts)
+*						STRTDISC - Number of structural nodes per strut
+
+------------------------------- TOWER AND TORQUE TUBE ---------------------
+5.00					TWRHEIGHT - Height of the (fixed - non rotating) tower [m]
+SP_Tower.txt			TWRFILE - Name of file containing properties for the tower
+
+5.00					TRQTBHEIGHT - Height (or length) of the torque tube (the rotating part of the tower) [m]
+SP_Torquetube.txt		TRQTBFILE - Name of file containing properties for the torque tube
+
+5.00					TRQTBCLEAR - Clearance of the torque tube, must be <= TWRHEIGHT [m]
+5.00					HUBPOS - height position of the generator hub that is connecting the torque tube with the fixed tower (VAWT only) [m]
+1.00					TRQTBCONN - Absolute height position, starting after torque clearance, of a frictionless bearing that connects the torque tube to the fixed tower [m]
+
+5.00					RTRCLEAR - Rotor clearance
+0.975					BLDCONN - Absolute height position, starting after rotor clearance of blade, of the rigid blade torque tube connection 1 in [m] (VAWT only)
+40.000					BLDCONN - Absolute height position, starting after rotor clearance of blade, of the rigid blade torque tube connection 2 in [m] (VAWT only)
+
+------------------------------- BLADE CABLES (VAWT only) ------------------
+
+SP_Cable.txt			CABFILE - file containing the definitions of cables
+
+------------------------------- DATA OUTPUT TYPES -------------------------
+true					FOR_OUT - store (local) forces at all chosen locations
+true					ROT_OUT - store (local) body rotations at all chosen locations
+true					MOM_OUT - store (local) moments at all chosen locations
+true					DEF_OUT - store (local) deflections at all chosen locations
+true					POS_OUT - store (global) positions at all chosen locations
+true					VEL_OUT - store (global) velocities at all chosen locations
+true					ACC_OUT - store (global) accelerations at all chosen locations
+true					LVE_OUT - store (local) velocities at all chosen locations
+true					LAC_OUT - store (local) accelerations at all chosen locations
+
+------------------------------- DATA OUTPUT LOCATIONS ---------------------
+any number, or zero, user defined positions can be chosen as output locations. locations can be assigned at any of the following components:
+blades, struts, tower and guy cables. See the following examples for the used nomenclature:
+
+BLD_1_0.0000			- exemplary position, blade 1 at  0.0% normalized radius
+BLD_1_0.1000			- exemplary position, blade 1 at  10.0% normalized radius
+BLD_1_0.2000			- exemplary position, blade 1 at  20.0% normalized radius
+BLD_1_0.3000			- exemplary position, blade 1 at  30.0% normalized radius
+BLD_1_0.4000			- exemplary position, blade 1 at  40.0% normalized radius
+BLD_1_0.5000			- exemplary position, blade 1 at  50.0% normalized radius
+BLD_1_0.6000			- exemplary position, blade 1 at  60.0% normalized radius
+BLD_1_0.7000			- exemplary position, blade 1 at  70.0% normalized radius
+BLD_1_0.8000			- exemplary position, blade 1 at  80.0% normalized radius
+BLD_1_0.9000			- exemplary position, blade 1 at  90.0% normalized radius
+BLD_1_1.0000			- exemplary position, blade 1 at  100.0% normalized radius
+
+BLD_2_0.0000			- exemplary position, blade 2 at  0.0% normalized radius
+BLD_2_0.1000			- exemplary position, blade 2 at  10.0% normalized radius
+BLD_2_0.2000			- exemplary position, blade 2 at  20.0% normalized radius
+BLD_2_0.3000			- exemplary position, blade 2 at  30.0% normalized radius
+BLD_2_0.4000			- exemplary position, blade 2 at  40.0% normalized radius
+BLD_2_0.5000			- exemplary position, blade 2 at  50.0% normalized radius
+BLD_2_0.6000			- exemplary position, blade 2 at  60.0% normalized radius
+BLD_2_0.7000			- exemplary position, blade 2 at  70.0% normalized radius
+BLD_2_0.8000			- exemplary position, blade 2 at  80.0% normalized radius
+BLD_2_0.9000			- exemplary position, blade 2 at  90.0% normalized radius
+BLD_2_1.0000			- exemplary position, blade 2 at  100.0% normalized radius
+
+BLD_3_0.0000			- exemplary position, blade 3 at  0.0% normalized radius
+BLD_3_0.1000			- exemplary position, blade 3 at  10.0% normalized radius
+BLD_3_0.2000			- exemplary position, blade 3 at  20.0% normalized radius
+BLD_3_0.3000			- exemplary position, blade 3 at  30.0% normalized radius
+BLD_3_0.4000			- exemplary position, blade 3 at  40.0% normalized radius
+BLD_3_0.5000			- exemplary position, blade 3 at  50.0% normalized radius
+BLD_3_0.6000			- exemplary position, blade 3 at  60.0% normalized radius
+BLD_3_0.7000			- exemplary position, blade 3 at  70.0% normalized radius
+BLD_3_0.8000			- exemplary position, blade 3 at  80.0% normalized radius
+BLD_3_0.9000			- exemplary position, blade 3 at  90.0% normalized radius
+BLD_3_1.0000			- exemplary position, blade 3 at  100.0% normalized radius
+
+TWR_0.0000				- exemplary position, tower at 0.0% normalized height
+TWR_0.3333				- exemplary position, tower at 33.3% normalized height
+TWR_0.6667				- exemplary position, tower at 66.7% normalized height
+TWR_1.0000				- exemplary position, tower at 100.0% normalized height
+
+TRQ_0.0000				- exemplary position, tower at 0.0% normalized height
+TRQ_0.1667				- exemplary position, tower at 16.7% normalized height
+TRQ_0.3333				- exemplary position, tower at 33.3% normalized height
+TRQ_0.5000				- exemplary position, tower at 50.0% normalized height
+TRQ_0.6667				- exemplary position, tower at 66.7% normalized height
+TRQ_0.8333				- exemplary position, tower at 83.3% normalized height
+TRQ_1.0000				- exemplary position, tower at 100.0% normalized height
+
+CAB_1_0.0				- exemplary position, cable 1 at 0% normalized length
+CAB_1_1.0				- exemplary position, cable 1 at 100% normalized length
+
+CAB_2_0.0				- exemplary position, cable 2 at 0% normalized length
+CAB_2_1.0				- exemplary position, cable 2 at 100% normalized length
+
+CAB_3_0.0				- exemplary position, cable 3 at 0% normalized length
+CAB_3_1.0				- exemplary position, cable 3 at 100% normalized length

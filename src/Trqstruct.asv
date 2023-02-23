@@ -1,3 +1,0 @@
-function Trqstruct(ETrq,GTrq,rhoTrq,DTrq,TrqLength)
-    Area = pi/4*DTrq.^2
-end

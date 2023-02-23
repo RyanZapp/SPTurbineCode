@@ -6,12 +6,21 @@ function generateFile(segLength1,segLength2,bladeNodes,H,AR,ChordLength,numBlade
     MTuneTrq,STuneTrq,RDmpTrq,trqNodes,ODTrq,IDTrq,trqExtension,TrqLength,rhoTwr,ODTwr,IDTwr,TwrLength, ...
     ETwr,GTwr,MTuneTwr,STuneTwr,RDmpTwr,twrNodes,twrExtension,mainExtension,epsilon,gbr,gbe,ddTF,gsi, ...
     dts,dtd,mbt,bdeploy,bdelay,BladeStruct_fileName,Cable_fileName,Torquetube_fileName,Tower_fileName, ...
-    TrqClear,hubPos,trqtbconn,rtrClear,bldcon1,bldcon2)
+    TrqClear,hubPos,trqtbconn,rtrClear,bldconn,dataTypes,dataNames)
 
     format long
 % Super important note, the next thing I need to do is write a code that
 % multiplies all airfoil coordinate values by 3 so that it goes from 1 inch
 % chord to 3 inch chord
+    bladeNum = numBlades; % this is the number of blades, but stored as an integer
+    numBlades = num2str(numBlades);
+    deltaBld = 10;
+    deltaTwr = 3;
+    deltaTrq = 6;
+    bldLine = 0:deltaBld:1;
+    twrLine = 0:deltaTwr:1;
+    trqLine = 0:deltaTrq:1;
+
     ChordLength = 0.0254*ChordLength; % This converts ChordLength from inches to meters
     CableDiam = 0.0254*CableDiam; % Convert CableDiam from inches to meters
     % Having inputs to the nested functions be inputs of the parent
@@ -571,11 +580,195 @@ function generateFile(segLength1,segLength2,bladeNodes,H,AR,ChordLength,numBlade
     fprintf(fid,k4);
     fprintf(fid,'\n');
     fprintf(fid,'%i',gbr); % gearbox ratio
+    for j = 1:3
+        fprintf(fid,' ');
+    end
+    fprintf(fid,'GBRATIO - gearbox ratio (N)\n');
+    fprintf(fid,'%i',gbe);
+    for j = 1:3
+        fprintf(fid,' ');
+    end
+    fprintf(fid,'GBOXEFF - gearbox efficiency (0-1)\n');
+    fprintf(fid,'%s',ddTF);
+    for j = 1:3
+        fprintf(fid,' ');
+    end
+    fprintf(fid,'DRTRDOF - model drivetrain dynamics (true / false)\n');
+    fprintf(fid,'%i',gsi);
+    for j = 1:3
+        fprintf(fid,' '); % it might be 3 tab spaces instead of regular ones
+    end
+    fprintf(fid,'GENINER - Generator side (HSS) Inertia (kg*m^2)\n');
+    fprintf(fid,'%i',dts);
+    for j = 1:3
+        fprintf(fid,' ');
+    end
+    fprintf(fid,'DTTORSPR - Drivetrain torsional stiffness (N*m/rad)\n');
+    fprintf(fid,'%i',dtd);
+    for j = 1:3
+        fprintf(fid,' ');
+    end
+    fprintf(fid,'DTTORDMP - Drivetrain torsional damping (N*m*s/rad)\n');
+    fprintf(fid,'\n');
+    fprintf(fid,k5);
+    fprintf(fid,'\n');
+    fprintf(fid,'%i',mbt);
+    for j = 1:3
+        fprintf(fid,' ');
+    end
+    fprintf(fid,'BRKTORQUE - maximum brake torque (s)\n');
+    fprintf(fid,'%i',bdeploy);
+    for j = 1:3
+        fprintf(fid,' ');
+    end
+    fprintf(fid,'BRKDEPLOY - brake deploy time (s) (only used with DTU style controllers)\n');
+    fprintf(fid,'%i',bdelay);
+    for j = 1:3
+        fprintf(fid,' ');
+    end
+    fprintf(fid,'BRKDELAY - brake delay time (s) (only used with DTU style controllers)\n');
+    fprintf(fid,'\n');
+    fprintf(fid,k6);
+    fprintf(fid,'\n');
+    for i = 1:3
+        fprintf(fid,'%i',0);
+        for j = 1:3
+            fprintf(fid,' ');
+        end
+        fprintf(fid,'ERRORPITCH_%i - pitch error blade%i (deg)\n',i);
+    end
+    fprintf(fid,'\n');
+    fprintf(fid,k7);
+    fprintf(fid,'%i',numBlades);
+    for j = 1:4
+        fprintf(fid,' ');
+    end
+    fprintf(fid,'NUMBLD - Number of blades\n');
+    for i = 1:2
+        fprintf(fid,'%s',BladeStruct_fileName);
+        for j = 1:2
+            fprintf(fid,' ');
+        end
+        fprintf(fid,'BLDFILE_%i - Name of file containing properties for blade %i\n',i);
+    end
+    fprintf(fid,'\n');
+    fprintf(fid,k8);
+    fprintf(fid,'\n');
+    for i = 1:2
+        fprintf(fid,'*');
+        for j = 1:6
+            fprintf(fid,' ');
+        end
+        fprintf(fid,'STRTFILE_%i - Name of file containing properties for strut%i (if blade has struts)\n',i);
+    end
+    fprintf(fid,'*');
+    for j = 1:6
+        fprintf(fid,' ');
+    end
+    fprintf(fid,'STRTDISC - Number of structural nodes per strut\n');
+    fprintf(fid,'\n');
+    fprintf(fid,k9);
+    fprintf(fid,'\n');
+    fprintf(fid,'%.2f',TwrLength);
+    for j = 1:4
+        fprintf(fid,' ');
+    end
+    fprintf(fid,'TWRHEIGHT - Height of the (fixed - non rotating) tower [m]\n');
+    fprintf(fid,'%s',Tower_fileName);
+    for j = 1:2
+        fprintf(fid,' ');
+    end
+    fprintf(fid,'TWRFILE - Name of file containing properties for the tower\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%.2f',TrqLength);
+    for j = 1:4
+        fprintf(fid,' ');
+    end
+    fprintf(fid,'TRQTBHEIGHT - Height (or length) of the torque tube (the rotating part of the tower) [m]\n');
+    fprintf(fid,'%s',Torquetube_fileName);
+    for j = 1:9
+        fprintf(fid,' ');
+    end
+    fprintf(fid,'TRQTBFILE - Name of file containing properties for the torque tube\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%.2f',TrqClear);
+    for j = 1:4
+        fprintf(fid,' ');
+    end
+    fprintf(fid,'TRQTBCLEAR - Clearance of the torque tube, must be <= TWRHEIGHT [m]\n');
+    fprintf(fid,'%.2f',hubPos);
+    for j = 1:4
+        fprintf(fid,' ');
+    end
+    fprintf(fid,'HUBPOS - height position of the generator hub that is connecting the torque tube with the fixed tower (VAWT only) [m]\n');
+    fprintf(fid,'%.2f',trqtbconn);
+    for j = 1:4
+        fprintf(fid,' ');
+    end
+    fprintf(fid,'TRQTBCONN - Absolute height position, starting after torque clearance, of a frictionless bearing that connects the torque tube to the fixed tower [m]\n');
+    fprintf(fid,'\n');
+    fprintf(fid,'%.2f',rtrClear);
+    for j = 1:4
+        fprintf(fid,' ');
+    end
+    fprintf(fid,'RTRCLEAR - Rotor clearance\n');
+    for i = 1:2
+        fprintf(fid,'%.3f',bldconn(i));
+        for j = 1:4
+            fprintf(fid,' ');
+        end
+        fprintf(fid,'BLDCONN - Absolute height position, starting after rotor clearance of blade, of the rigid blade torque tube connection %i in [m] (VAWT only)\n',i);
+    end
+    fprintf(fid,'\n');
+    fprintf(fid,k10);
+    fprintf(fid,'\n');
+    fprintf(fid,'%s',Cable_fileName);
+    for j = 1:2
+        fprintf(fid,' ');
+    end
+    fprintf(fid,'CABFILE - file containing the definitions of cables\n');
+    fprintf(fid,'\n');
+    fprintf(fid,k11);
+    fprintf(fid,'\n');
+    for i = 1:9
+        fprintf(fid,'%s',dataTypes{i});
+        for j = 1:3
+            fprintf(fid,' ');
+        end
+        fprintf(fid,'%s - store %s at all chosen locations\n',dataNames{i}{1},dataNames{i}{2});
+    end
+    fprintf(fid,'\n');
+    fprintf(fid,k12);
+    fprintf(fid,'\n');
+    fprintf(fid,'any number, or zero, user defined positions can be chosen as output locations. locations can be assigned at any of the following components:\n');
+    fprintf(fid,'blades, struts, tower and guy cables. See the following examples for the used nomenclature:\n');
+    fprintf(fid,'\n');
+    for i = 1:bladeNum
+        for j = 1:length(bldLine)
+        fprintf(fid,'BLD_%i_%.4f  - exemplary position, blade %i at  %.1f%s normalized radius\n',i,bldLine(j),i,100*bldLine(j),'%'); % I need to finish this part
+        end
+        fprintf(fid,'\n');
+    end
+    for i = 1:length(twrLine)
+        fprintf(fid,'TWR_%.4f  - exemplary position, tower at %.1f%s normalized height\n',twrLine(i),100*twrLine(i),'%');
+    end
+    fprintf(fid,'\n');
+    for i = 1:length(trqLine)
+        fprintf(fid,'TRQ_%.4f  - exemplary position, tower at %.1f%s normalized height',trqLine(i),100*trqLine(i),'%');
+    end
+    fprintf(fid,'\n');
+    % From here, all I need to do is finish up the cable file inputs
+    for i = 1:2
+        fprintf(fid,'CAB_%i_%.1f  - exemplary position, cable %i at %i')
+    end
+
+    % I wonder if I should be using \t for tab spacing?
     % When you come back, finissh the rough main file
 
     % during the meeting, figure out if Richard's code is right
-    % get 
-
+    % get the proper airfoil output from Leon
+    % 
+    
 
 
     % From this point, you will need to output your values

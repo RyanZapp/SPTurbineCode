@@ -48,7 +48,9 @@ STuneTwr = 1;
 RDmpTwr = 0.0127;
 twrNodes = 2;
 % Enter the number of blades
-numBlades = '3';
+% I need to change this to an integer and use num2str to turn this into a
+% string at a later date
+numBlades = 3;
 % Enter the number of cables
 numCables = 3;
 
@@ -89,10 +91,9 @@ trqtbconn = 1; % This value is left blank in the sandia file
 % however, it appears to represent Absolute height position, 
 % starting after torque tube clearance, of a frictionless bearing that connects the torque tube to the fixed tower [m]
 rtrClear = 5; % rotor clearance
-bldcon1 = 0.975; % absolute height position, starting after rotor clearance,
+bldconn = [0.975,40]; % absolute height position, starting after rotor clearance,
 % of the position where the blade connects to torque tube (rigid connection
-% assumed) (this is the lower connection)
-bldcon2 = 40; % This is the upper connection
+% assumed) (entry 1 is lower position, entry 2 is upper position)
 % Enter the Turbine height (Excluding Ground Clearance)
 H = 1.5; % Height of Turbine starting and ending where the blades begin and end (given in feet)
 AR = 1.11; % Aspect ratio
@@ -105,7 +106,22 @@ TrqLength = 5; % Length of torque tube
 TwrLength = 5;
 % ex: If you have 3 cables, and two of them are identical, but one is made
 % of a different material, then set cableTypes = 2
-
+FOR_OUT = 'true';
+ROT_OUT = 'true';
+MOM_OUT = 'true';
+DEF_OUT = 'true';
+POS_OUT = 'true';
+VEL_OUT = 'true';
+ACC_OUT = 'true';
+LVE_OUT = 'true';
+LAC_OUT = 'true';
+dataTypes = {FOR_OUT ROT_OUT MOM_OUT DEF_OUT POS_OUT ...
+    VEL_OUT ACC_OUT LVE_OUT LAC_OUT};
+dataNames = {{'FOR_OUT','(local) forces'} {'ROT_OUT','(local) body rotations'} ...
+    {'MOM_OUT','(local) moments'} {'DEF_OUT','(local) deflections'} ...
+    {'POS_OUT','(global) positions'} {'VEL_OUT','(global) velocities'} ...
+    {'ACC_OUT','(global) accelerations'} {'LVE_OUT','(local) velocities'} ...
+    {'LAC_OUT','(local) accelerations'}};
 %foilNames = {'naca0021_csv','naca0024_csv'};
 
 % This file contains the outputs from mathematica
@@ -133,4 +149,4 @@ RDpCab,cableNodes,topConnection,topAnchor,cableTypes,ETrq,GTrq,rhoTrq,MTuneTrq,S
 ODTrq,IDTrq,trqExtension,TrqLength,rhoTwr,ODTwr,IDTwr,TwrLength,ETwr,GTwr,MTuneTwr,STuneTwr, ...
 RDmpTwr,twrNodes,twrExtension,mainExtension,epsilon,gbr,gbe,ddTF,gsi,dts,dtd,mbt,bdeploy,bdelay, ...
 BladeStruct_fileName,Cable_fileName,Torquetube_fileName,Tower_fileName,TrqClear,hubPos, ...
-trqtbconn,rtrClear,bldcon1,bldcon2)
+trqtbconn,rtrClear,bldconn,dataTypes,dataNames)
