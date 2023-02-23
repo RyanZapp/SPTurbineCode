@@ -772,6 +772,9 @@ function generateFile(segLength1,segLength2,bladeNodes,H,AR,ChordLength,numBlade
             fprintf(fid,'\n');
         end
     end
+
+    % The connector value is, in fact the height at which the connector
+    % nodes are placed
     % I wonder if I should be using \t for tab spacing?
     % When you come back, finissh the rough main file
 

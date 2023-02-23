@@ -1,6 +1,6 @@
 function D = Bladestruct(segLength1,segLength2,MathematicaOutputExtension,foilNames, ...
     EBlade,GBlade,rhoBlade,bladeNodes,ChordLength)
-
+    % Make sure that things are
     D = zeros(bladeNodes,8); % 8 is the number of variables that are currently being output into the structual
     
     OO = ones(bladeNodes,1);
@@ -11,7 +11,7 @@ function D = Bladestruct(segLength1,segLength2,MathematicaOutputExtension,foilNa
     T = readtable(MathematicaOutputExtension);
     A1 = T{1:end,foilNames{1}}; % Structural Properties of first NACA foil
     A2 = T{1:end,foilNames{2}}; % Structural Properties of second NACA foil
-    % Extract structural properties for first airfoil
+    % Extract structuralq properties for first airfoil
     xcm1 = A1(1)*OO;
     ycm1 = A1(2)*OO;
     Ixx1 = A1(3)*OO;

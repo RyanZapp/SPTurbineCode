@@ -95,6 +95,9 @@ bldconn = [0.975,40]; % absolute height position, starting after rotor clearance
 % of the position where the blade connects to torque tube (rigid connection
 % assumed) (entry 1 is lower position, entry 2 is upper position)
 % Enter the Turbine height (Excluding Ground Clearance)
+% Confirmed: This changes the position of the connector nodes
+% Additionally, we need to figure out if I should have structural
+% properties at each of the 
 H = 1.5; % Height of Turbine starting and ending where the blades begin and end (given in feet)
 AR = 1.11; % Aspect ratio
 MtuneBlade = 1;
