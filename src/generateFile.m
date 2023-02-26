@@ -1,12 +1,12 @@
 %function generateFile(Bladestruct,generic variable 1, generic variable 2,outputLocation)
 function generateFile(segLength1,segLength2,bladeNodes,H,AR,ChordLength,numBlades,bladeName, ...
     bladeshapeExtension,bladestructExtension,MathematicaOutputExtension,foilNames,EBlade,GBlade, ...
-    rhoBlade,cableExtension,rhoCable,ECable,CableDiam,numCables,anchorPoints,CableTension,MtuneBlade, ...
-    StuneBlade,RayDmpBlade,RDpCab,cableNodes,topConnection,topAnchor,cableTypes,ETrq,GTrq,rhoTrq, ...
+    rhoBlade,cableExtension,rhoCable,ECable,CableDiam,numCables,anchorPoints,CableTension,MTuneBld, ...
+    STuneBld,RDmpBld,RDmpCab,cableNodes,topConnection,topAnchor,cableTypes,ETrq,GTrq,rhoTrq, ...
     MTuneTrq,STuneTrq,RDmpTrq,trqNodes,ODTrq,IDTrq,trqExtension,TrqLength,rhoTwr,ODTwr,IDTwr,TwrLength, ...
     ETwr,GTwr,MTuneTwr,STuneTwr,RDmpTwr,twrNodes,twrExtension,mainExtension,epsilon,gbr,gbe,ddTF,gsi, ...
     dts,dtd,mbt,bdeploy,bdelay,BladeStruct_fileName,Cable_fileName,Torquetube_fileName,Tower_fileName, ...
-    TrqClear,hubPos,trqtbconn,rtrClear,bldconn,dataTypes,dataNames)
+    TrqClear,hubPos,trqtbconn,rtrClear,bldconn,dataTypes,dataNames,HbM,HbI)
 
     format long
 % Super important note, the next thing I need to do is write a code that
@@ -186,17 +186,17 @@ function generateFile(segLength1,segLength2,bladeNodes,H,AR,ChordLength,numBlade
     fprintf(fid,'NORMHEIGHT');
     fprintf(fid,'\n');
     fprintf(fid,'\n'); 
-    fprintf(fid,'%.4f',RayDmpBlade); % Replace with Rayleigh Damp output
+    fprintf(fid,'%.4f',RDmpBld); % Replace with Rayleigh Damp output
     for i = 1:2
         fprintf(fid,' ');
     end
     fprintf(fid,'RAYLEIGHDMP\n');
-    fprintf(fid,'%.1f',StuneBlade);
+    fprintf(fid,'%.1f',STuneBld);
     for i = 1:3
         fprintf(fid,' ');
     end
     fprintf(fid,'STIFFTUNER\n');
-    fprintf(fid,'%.1f',MtuneBlade);
+    fprintf(fid,'%.1f',MTuneBld);
     for i = 1:3
         fprintf(fid,' ');
     end
@@ -289,7 +289,7 @@ function generateFile(segLength1,segLength2,bladeNodes,H,AR,ChordLength,numBlade
         fprintf(fid,' ');
         fprintf(fid,'%.3e',ECable(j));
         fprintf(fid,' ');
-        fprintf(fid,'%.2f',RDpCab(j));
+        fprintf(fid,'%.2f',RDmpCab(j));
         fprintf(fid,' ');
         fprintf(fid,'%.2f',CableDiam(j));
         fprintf(fid,'\n');
@@ -570,12 +570,12 @@ function generateFile(segLength1,segLength2,bladeNodes,H,AR,ChordLength,numBlade
     fprintf(fid,'\n');
     fprintf(fid,k3);
     fprintf(fid,'\n');
-    fprintf(fid,'%i',0); % Hub mass
+    fprintf(fid,'%i',HbM); % Hub mass
     for j = 1:6
         fprintf(fid,'\t');
     end
     fprintf(fid,'HUBMASS - Hub Mass (kg)\n');
-    fprintf(fid,'%i',0); % Hub inertia
+    fprintf(fid,'%i',HbI); % Hub inertia
     for j = 1:6
         fprintf(fid,'\t');
     end
