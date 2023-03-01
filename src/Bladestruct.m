@@ -50,7 +50,7 @@ function D = Bladestruct(segLength1,segLength2,MathematicaOutputExtension,foilNa
     D(segLength1+1:segLength1+segLength2,13) = xcm2(segLength1+1:segLength1+segLength2);
     D(segLength1+segLength2+1:end,13) = xcm1(segLength1+segLength2+1:end);
     D(:,13) = D(:,13)/ChordLength;
-
+    % Compute ycm for total blade
     D(1:segLength1,14) = ycm1(1:segLength1); 
     D(segLength1+1:segLength1+segLength2,14) = ycm2(segLength1+1:segLength1+segLength2);
     D(segLength1+segLength2+1:end,14) = ycm1(segLength1+segLength2+1:end);
@@ -77,11 +77,11 @@ function D = Bladestruct(segLength1,segLength2,MathematicaOutputExtension,foilNa
     % Compute Center of elasticity (This will change when we get BECAS running)
     %xce = 0*OO;
     %yce = 0*OO;
-    D(:,15) = 0*OO/ChordLength;
-    D(:,16) = 0*OO/ChordLength;
+    D(:,15) = D(:,13);
+    D(:,16) = D(:,14); % xce and yce are equal to xc and yc for isotropic materials
     % Compute Center of Shear (This will change when we get BECAS running)
     %xcs = 0*OO;
     %ycs = 0*OO;
-    D(:,17) = 0*OO/ChordLength;
+    D(:,17) = 0*OO/ChordLength; % these are not used by qblade so we set them equal to zero
     D(:,18) = 0*OO/ChordLength;
 end
