@@ -88,13 +88,14 @@ bladeName = 'NREL_5MW';
 % RDmpBld = Blade Rayleigh damping coefficient
 % foilNames = Names of airfoils being used to construct blade
 
-Blade = 1;
+EBlade = 1;
 GBlade = 1; 
 rhoBlade = 1; 
 MTuneBld = 1;
 STuneBld = 1;
 RDmpBld = 1;
-foilNames = {'naca0021_csv','nasalangleyMS1-0317_csv'}; 
+foilNames = {'naca0021_csv','nasalangleyMS1_0317_csv'};
+% Note for foilNames: replace all instances of '-' and '.' with '_'
 
 % Mathematics_OutputFile = Name of Excel File containing Airfoil structural
 %                          properties output from Mathematica
