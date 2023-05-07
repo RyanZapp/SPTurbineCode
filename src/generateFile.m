@@ -1,4 +1,3 @@
-%function generateFile(Bladestruct,generic variable 1, generic variable 2,outputLocation)
 function generateFile(segLength1,segLength2,bladeNodes,H,AR,ChordLength,numBlades,bladeName, ...
     bladeshapeExtension,bladestructExtension,MathematicaOutputExtension,foilNames,EBlade,GBlade, ...
     rhoBlade,cableExtension,rhoCable,ECable,CableDiam,numCables,anchorPoints,CableTension,MTuneBld, ...
@@ -6,12 +5,10 @@ function generateFile(segLength1,segLength2,bladeNodes,H,AR,ChordLength,numBlade
     MTuneTrq,STuneTrq,RDmpTrq,trqNodes,ODTrq,IDTrq,trqExtension,TrqLength,rhoTwr,ODTwr,IDTwr,TwrLength, ...
     ETwr,GTwr,MTuneTwr,STuneTwr,RDmpTwr,twrNodes,twrExtension,mainExtension,epsilon,gbr,gbe,ddTF,gsi, ...
     dts,dtd,mbt,bdeploy,bdelay,BladeStruct_fileName,Cable_fileName,Torquetube_fileName,Tower_fileName, ...
-    TrqClear,hubPos,trqtbconn,rtrClear,bldconn,dataTypes,dataNames,HbM,HbI)
+    TrqClear,hubPos,trqtbconn,rtrClear,bldconn,dataTypes,dataNames,HbM,HbI,bladeOffset)
 
     format long
-% Super important note, the next thing I need to do is write a code that
-% multiplies all airfoil coordinate values by 3 so that it goes from 1 inch
-% chord to 3 inch chord
+
     bladeNum = numBlades; % this is the number of blades, but stored as an integer
     numBlades = num2str(numBlades);
     deltaBld = 10;
@@ -27,9 +24,8 @@ function generateFile(segLength1,segLength2,bladeNodes,H,AR,ChordLength,numBlade
     cabLine = 0:deltaCable:1;
     ChordLength = 0.0254*ChordLength; % This converts ChordLength from inches to meters
     CableDiam = 0.0254*CableDiam; % Convert CableDiam from inches to meters
-    % Having inputs to the nested functions be inputs of the parent
-    % function works perfectly
-    [Chord,Twist,Circ,Height,Radius,TAxis] = Bladeshape(segLength1,segLength2,bladeNodes,H,AR,ChordLength);
+    
+    [Chord,Twist,Circ,Height,Radius,TAxis] = Bladeshape(segLength1,segLength2,bladeNodes,H,AR,ChordLength,bladeOffset);
     % This function computes the blade structural files
     D = Bladestruct(segLength1,segLength2,MathematicaOutputExtension,foilNames, ...
     EBlade,GBlade,rhoBlade,bladeNodes,ChordLength);
@@ -39,8 +35,7 @@ function generateFile(segLength1,segLength2,bladeNodes,H,AR,ChordLength,numBlade
     [Ixx_Trq,Iyy_Trq,Area_Trq,Mass_Trq,RGX_Trq,RGY_Trq] = Trqstruct(rhoTrq,ODTrq,IDTrq,TrqLength);
 
     [Ixx_Twr,Iyy_Twr,Area_Twr,Mass_Twr,RGX_Twr,RGY_Twr] = Twrstruct(rhoTwr,ODTwr,IDTwr,TwrLength);
-    % I feel like it is a good idea to read in all of the function files
-    % first at the top
+    
     k1 = '---------------------- QBLADE STRUCTURAL MODEL INPUT FILE -----------------';
     k2 = '------------------------------- CHRONO PARAMETERS -------------------------';
     k3 = '------------------------------- MASS AND INERTIA --------------------------';
@@ -159,27 +154,13 @@ function generateFile(segLength1,segLength2,bladeNodes,H,AR,ChordLength,numBlade
         for i = 1:(20-length(TAxis(j,:)))
             fprintf(fid,' ');
         end
-        fprintf(fid,'\n');
+        if j ~= bladeNodes
+            fprintf(fid,'\n');
+        end
     end
 
     fclose('all');
     % This marks the end of the creation of the bladeshape text file
-
-
-    % I think the move might be to read these file inputs as inputs
-    % themselves
-    %LL = Tempfile(k1); % A direct function call with a variable assignment most definitely works
-    %disp(Tempfile(k1)) % Directly printing the output of a function also works as well
-    %disp(10*LL)
-    %outputLocation = 'C:\Users\zipza\Documents\SPCode\QbladeOutputFiles\'; % I should probably be outputting
-    % to the input files folder
-    %fileName = 'BladeFile.txt'; % This needs to be an input
-    %fileName2 = 'TurbCable.txt';
-    %extension1 = append(outputLocation,'\',fileName);
-    %extension2 = append(outputLocation,'\',fileName2);
-    %bladeNodes = 34;
-    % The input numbers below need to stay as is for now because I have no
-    % idea how to calculate them
     
     % Name your Blade File Below
     fid = fopen(bladestructExtension,'w');
@@ -188,70 +169,99 @@ function generateFile(segLength1,segLength2,bladeNodes,H,AR,ChordLength,numBlade
     fprintf(fid,'\n'); 
     fprintf(fid,'%.4f',RDmpBld); % Replace with Rayleigh Damp output
     for i = 1:2
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
     end
     fprintf(fid,'RAYLEIGHDMP\n');
     fprintf(fid,'%.1f',STuneBld);
     for i = 1:3
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
     end
     fprintf(fid,'STIFFTUNER\n');
     fprintf(fid,'%.1f',MTuneBld);
     for i = 1:3
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
     end
     fprintf(fid,'MASSTUNER\n');
     fprintf(fid,'\n');
     fprintf(fid,'%i',bladeNodes);
     for i = 1:3
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
     end
     fprintf(fid,'DISC\n');
     fprintf(fid,'\n');
     fprintf(fid,'LENGTH_[m]');
-    fprintf(fid,' ');
+    fprintf(fid,'\t');
     fprintf(fid,'MASS_[kg/m]');
-    fprintf(fid,' ');
+    fprintf(fid,'\t');
     fprintf(fid,'Eix_[N.m^2]');
-    fprintf(fid,' ');
+    fprintf(fid,'\t');
     fprintf(fid,'Eiy_[N.m^2]');
-    fprintf(fid,' ');
+    fprintf(fid,'\t');
     fprintf(fid,'EA_[N]');
-    fprintf(fid,' ');
+    for j = 1:2
+    fprintf(fid,'\t');
+    end
     fprintf(fid,'GJ_[N.m^2]');
-    fprintf(fid,' ');
+    fprintf(fid,'\t');
     fprintf(fid,'GA_[N]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'STRPIT_[deg]');
-    fprintf(fid,' ');
+    fprintf(fid,'\t');
     fprintf(fid,'KSX_[-]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'KSY_[-]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'RGX_[-]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'RGY_[-]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'XCM_[-]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'YCM_[-]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'XCE_[-]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'YCE_[-]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'XCS_[-]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'YCS_[-]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'\n');
     for j = 1:bladeNodes
         for i = 1:18
             fprintf(fid,'%.4e',D(j,i));
+            if i == 8
+                fprintf(fid,'\t');    
+            end
             if i ~= 18
-                fprintf(fid,' ');
+                fprintf(fid,'\t');
             else
-                fprintf(fid,'\n');
+                if j ~= bladeNodes
+                    fprintf(fid,'\n');
+                end
             end
         end
     end
@@ -263,34 +273,34 @@ function generateFile(segLength1,segLength2,bladeNodes,H,AR,ChordLength,numBlade
     fprintf(fid,'CABELEMENTS');
     fprintf(fid,'\n');
     fprintf(fid,'ID');
-    fprintf(fid,' ');
+    fprintf(fid,'\t');
     fprintf(fid,'Dens.[kg/m^3]');
-    fprintf(fid,' ');
+    fprintf(fid,'\t');
     fprintf(fid,'Area[m^2]');
-    fprintf(fid,' ');
+    fprintf(fid,'\t');
     fprintf(fid,'Iyy[m^4]');
-    fprintf(fid,' ');
+    fprintf(fid,'\t');
     fprintf(fid,'EMod[N/m^4]');
-    fprintf(fid,' ');
+    fprintf(fid,'\t');
     fprintf(fid,'RDp.[-]');
-    fprintf(fid,' ');
+    fprintf(fid,'\t');
     fprintf(fid,'Dia[m]');
     fprintf(fid,'\n');
     for j = 1:cableTypes
         fprintf(fid,'%i',j);
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
         fprintf(fid,'%.2f',rhoCable(j));
         for i = 1:3
-            fprintf(fid,' ');
+            fprintf(fid,'\t');
         end
         fprintf(fid,'%.3e',AreaCable(j));
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
         fprintf(fid,'%.3e',IyyCable(j));
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
         fprintf(fid,'%.3e',ECable(j));
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
         fprintf(fid,'%.2f',RDmpCab(j));
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
         fprintf(fid,'%.2f',CableDiam(j));
         fprintf(fid,'\n');
     end
@@ -298,50 +308,44 @@ function generateFile(segLength1,segLength2,bladeNodes,H,AR,ChordLength,numBlade
     fprintf(fid,'CABMEMBERS');
     fprintf(fid,'\n');
     fprintf(fid,'ID');
-    fprintf(fid,' ');
+    fprintf(fid,'\t');
     fprintf(fid,'CONN_1');
-    for i = 1:3
-        fprintf(fid,' ');
+    for i = 1:2
+        fprintf(fid,'\t');
     end
     fprintf(fid,'CONN_2');
-    for i = 1:4
-        fprintf(fid,' ');
+    for i = 1:3
+        fprintf(fid,'\t');
     end
     fprintf(fid,'TENSION[N]');
-    fprintf(fid,' ');
+    fprintf(fid,'\t');
     fprintf(fid,'CabID');
-    for i = 1:2
-        fprintf(fid,' ');
-    end
+    fprintf(fid,'\t');
     fprintf(fid,'Drag');
-    fprintf(fid,' ');
+    fprintf(fid,'\t');
     fprintf(fid,'ElmDsc');
-    fprintf(fid,' ');
+    fprintf(fid,'\t');
     fprintf(fid,'Name');
     fprintf(fid,'\n');
     for i = 1:numCables
         fprintf(fid,'%i',i);
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
         fprintf(fid,'%s_%.2f',topAnchor{i},topConnection(i));
-        for j = 1:3
-            fprintf(fid,' ');
-        end
+        fprintf(fid,'\t');
         fprintf(fid,'GRD_');
         fprintf(fid,'%.2f_%.2f',anchorPoints{i}(1),anchorPoints{i}(2));
-        for j = 1:2
-            fprintf(fid,' ');
-        end
+        fprintf(fid,'\t');
         fprintf(fid,'%.3e',CableTension);
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
         fprintf(fid,'%i',1);
         for j= 1:2
-            fprintf(fid,' ');
+            fprintf(fid,'\t');
         end
         fprintf(fid,'%.2f',0.99);
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
         fprintf(fid,'%i',cableNodes);
         for j = 1:2
-            fprintf(fid,' ');
+            fprintf(fid,'\t');
         end
         fprintf(fid,'GuyCable%i',i);
         if i ~= length(1:numCables)
@@ -354,61 +358,84 @@ function generateFile(segLength1,segLength2,bladeNodes,H,AR,ChordLength,numBlade
     fid = fopen(trqExtension,'w');
     fprintf(fid,'%.4f',RDmpTrq);
     for j = 1:2
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
     end
     fprintf(fid,'RAYLEIGHDMP\n');
     fprintf(fid,'%.1f',STuneTrq);
-    for j = 1:2
-        fprintf(fid,' ');
+    for j = 1:3
+        fprintf(fid,'\t');
     end
     fprintf(fid,'STIFFTUNER\n');
     fprintf(fid,'%.1f',MTuneTrq);
-    for j = 1:2
-        fprintf(fid,' ');
+    for j = 1:3
+        fprintf(fid,'\t');
     end
-    fprintf(fid,'MASSTUNER\n\n'); % does this work?
+    fprintf(fid,'MASSTUNER\n\n');
     fprintf(fid,'%i',trqNodes);
     for j = 1:3
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
     end
     fprintf(fid,'DISC\n\n');
-    fprintf(fid,'LENGTH_[-]'); % This is in meters in the sania file, but I
-    % Think I am right and Sandia is wrong
-    fprintf(fid,' ');
+    fprintf(fid,'LENGTH_[-]');
+    fprintf(fid,'\t');
     fprintf(fid,'MASS_[kg/m]');
-    fprintf(fid,' ');
+    fprintf(fid,'\t');
     fprintf(fid,'Eix_[N.m^2]');
-    fprintf(fid,' ');
+    fprintf(fid,'\t');
     fprintf(fid,'Eiy_[N.m^2]');
-    fprintf(fid,' ');
+    fprintf(fid,'\t');
     fprintf(fid,'EA_[N]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'GJ_[N.m^2]');
-    fprintf(fid,' ');
+    fprintf(fid,'\t');
     fprintf(fid,'GA_[N]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'STRPIT_[deg]');
-    fprintf(fid,' ');
+    fprintf(fid,'\t');
     fprintf(fid,'KSX_[-]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'KSY_[-]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'RGX_[-]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'RGY_[-]');
-    fprintf(fid,' ');
+    for i = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'XCM_[-]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'YCM_[-]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'XCE_[-]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'YCE_[-]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'XCS_[-]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'YCS_[-]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'DIA_[m]');
     fprintf(fid,'\n');
     for i = 1:2
@@ -417,33 +444,35 @@ function generateFile(segLength1,segLength2,bladeNodes,H,AR,ChordLength,numBlade
         else
             fprintf(fid,'%.4e',1);
         end
-        fprintf(fid,' ');
-        fprintf(fid,'%.4e',Mass_Trq/TrqLength); % MAss
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
+        fprintf(fid,'%.4e',Mass_Trq/TrqLength);
+        fprintf(fid,'\t');
         fprintf(fid,'%.4e',ETrq*Ixx_Trq);
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
         fprintf(fid,'%.4e',ETrq*Iyy_Trq);
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
         fprintf(fid,'%.4e',ETrq*Area_Trq);
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
         fprintf(fid,'%.4e',GTrq*(Ixx_Trq+Iyy_Trq));
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
         fprintf(fid,'%.4e',GTrq*Area_Trq);
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
         fprintf(fid,'%.4e',0); % Struct pitch
-        fprintf(fid,' ');
+        for j = 1:2
+            fprintf(fid,'\t');
+        end
         fprintf(fid,'%.4e',0); % shear factor x
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
         fprintf(fid,'%.4e',0); % shear factor y
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
         fprintf(fid,'%.4e',RGX_Trq/TrqLength); % Radius of Gyration X per unit length
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
         fprintf(fid,'%.4e',RGY_Trq/TrqLength);
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
         for j = 1:6
             fprintf(fid,'%.4e',0); % Represents XCM,YCM,XCE,YCE,XCS,YCS 
             % We know these values will be zero for a circular cross-section
-            fprintf(fid,' ');
+            fprintf(fid,'\t');
         end
         fprintf(fid,'%.4e',ODTrq);
         if i == 1
@@ -456,61 +485,84 @@ function generateFile(segLength1,segLength2,bladeNodes,H,AR,ChordLength,numBlade
     fid = fopen(twrExtension,'w');
     fprintf(fid,'%.4f',RDmpTwr);
     for j = 1:2
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
     end
     fprintf(fid,'RAYLEIGHDMP\n');
     fprintf(fid,'%.1f',STuneTwr);
-    for j = 1:2
-        fprintf(fid,' ');
+    for j = 1:3
+        fprintf(fid,'\t');
     end
     fprintf(fid,'STIFFTUNER\n');
     fprintf(fid,'%.1f',MTuneTwr);
-    for j = 1:2
-        fprintf(fid,' ');
+    for j = 1:3
+        fprintf(fid,'\t');
     end
-    fprintf(fid,'MASSTUNER\n\n'); % does this work?
+    fprintf(fid,'MASSTUNER\n\n');
     fprintf(fid,'%i',twrNodes);
     for j = 1:3
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
     end
     fprintf(fid,'DISC\n\n');
-    fprintf(fid,'LENGTH_[-]'); % This is in meters in the sania file, but I
-    % Think I am right and Sandia is wrong
-    fprintf(fid,' ');
+    fprintf(fid,'LENGTH_[-]');
+    fprintf(fid,'\t');
     fprintf(fid,'MASS_[kg/m]');
-    fprintf(fid,' ');
+    fprintf(fid,'\t');
     fprintf(fid,'Eix_[N.m^2]');
-    fprintf(fid,' ');
+    fprintf(fid,'\t');
     fprintf(fid,'Eiy_[N.m^2]');
-    fprintf(fid,' ');
+    fprintf(fid,'\t');
     fprintf(fid,'EA_[N]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'GJ_[N.m^2]');
-    fprintf(fid,' ');
+    fprintf(fid,'\t');
     fprintf(fid,'GA_[N]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'STRPIT_[deg]');
-    fprintf(fid,' ');
+    fprintf(fid,'\t');
     fprintf(fid,'KSX_[-]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'KSY_[-]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'RGX_[-]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'RGY_[-]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'XCM_[-]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'YCM_[-]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'XCE_[-]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'YCE_[-]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'XCS_[-]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'YCS_[-]');
-    fprintf(fid,' ');
+    for j = 1:2
+        fprintf(fid,'\t');
+    end
     fprintf(fid,'DIA_[m]');
     fprintf(fid,'\n');
     for i = 1:2
@@ -519,35 +571,37 @@ function generateFile(segLength1,segLength2,bladeNodes,H,AR,ChordLength,numBlade
         else
             fprintf(fid,'%.4e',1);
         end
-        fprintf(fid,' ');
-        fprintf(fid,'%.4e',Mass_Twr/TwrLength); % MAss
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
+        fprintf(fid,'%.4e',Mass_Twr/TwrLength);
+        fprintf(fid,'\t');
         fprintf(fid,'%.4e',ETwr*Ixx_Twr);
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
         fprintf(fid,'%.4e',ETwr*Iyy_Twr);
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
         fprintf(fid,'%.4e',ETwr*Area_Twr);
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
         fprintf(fid,'%.4e',GTwr*(Ixx_Twr+Iyy_Twr));
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
         fprintf(fid,'%.4e',GTwr*Area_Twr);
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
         fprintf(fid,'%.4e',0); % Struct pitch
-        fprintf(fid,' ');
+        for j = 1:2
+            fprintf(fid,'\t');
+        end
         fprintf(fid,'%.4e',0); % shear factor x
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
         fprintf(fid,'%.4e',0); % shear factor y
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
         fprintf(fid,'%.4e',RGX_Twr/TwrLength); % Radius of Gyration X per unit length
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
         fprintf(fid,'%.4e',RGY_Twr/TwrLength);
-        fprintf(fid,' ');
+        fprintf(fid,'\t');
         for j = 1:6
             fprintf(fid,'%.4e',0); % Represents XCM,YCM,XCE,YCE,XCS,YCS 
             % We know these values will be zero for a circular cross-section
-            fprintf(fid,' ');
+            fprintf(fid,'\t');
         end
-        fprintf(fid,'%.4e',ODTwr); % I guess we can just use the OD for the diameter value
+        fprintf(fid,'%.4e',ODTwr); % Use OD for diameter value
         if i == 1
             fprintf(fid,'\n');
         end
@@ -600,7 +654,7 @@ function generateFile(segLength1,segLength2,bladeNodes,H,AR,ChordLength,numBlade
     fprintf(fid,'DRTRDOF - model drivetrain dynamics (true / false)\n');
     fprintf(fid,'%i',gsi);
     for j = 1:6
-        fprintf(fid,'\t'); % it might be 3 tab spaces instead of regular ones
+        fprintf(fid,'\t');
     end
     fprintf(fid,'GENINER - Generator side (HSS) Inertia (kg*m^2)\n');
     fprintf(fid,'%i',dts);
@@ -751,7 +805,7 @@ function generateFile(segLength1,segLength2,bladeNodes,H,AR,ChordLength,numBlade
     fprintf(fid,'\n');
     for i = 1:bladeNum
         for j = 1:length(bldLine)
-        fprintf(fid,'BLD_%i_%.4f\t\t\t- exemplary position, blade %i at  %.1f%s normalized radius\n',i,bldLine(j),i,100*bldLine(j),'%'); % I need to finish this part
+        fprintf(fid,'BLD_%i_%.4f\t\t\t- exemplary position, blade %i at  %.1f%s normalized radius\n',i,bldLine(j),i,100*bldLine(j),'%');
         end
         fprintf(fid,'\n');
     end
@@ -763,7 +817,7 @@ function generateFile(segLength1,segLength2,bladeNodes,H,AR,ChordLength,numBlade
         fprintf(fid,'TRQ_%.4f\t\t\t\t- exemplary position, tower at %.1f%s normalized height\n',trqLine(i),100*trqLine(i),'%');
     end
     fprintf(fid,'\n');
-    % From here, all I need to do is finish up the cable file inputs
+   
     for i = 1:numCables
         for j = 1:length(cabLine)
             fprintf(fid,'CAB_%i_%.1f\t\t\t\t- exemplary position, cable %i at %i%s normalized length\n',i,cabLine(j),i,100*cabLine(j),'%');
@@ -772,19 +826,6 @@ function generateFile(segLength1,segLength2,bladeNodes,H,AR,ChordLength,numBlade
             fprintf(fid,'\n');
         end
     end
-
-    % The connector value is, in fact the height at which the connector
-    % nodes are placed
-    % I wonder if I should be using \t for tab spacing?
-    % When you come back, finissh the rough main file
-
-    % during the meeting, figure out if Richard's code is right
-    % get the proper airfoil output from Leon
-    % 
-    
-
-
-    % From this point, you will need to output your values
 
     
 end

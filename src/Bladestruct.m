@@ -1,7 +1,7 @@
 function D = Bladestruct(segLength1,segLength2,MathematicaOutputExtension,foilNames, ...
     EBlade,GBlade,rhoBlade,bladeNodes,ChordLength)
-    % Make sure that things are
-    D = zeros(bladeNodes,8); % 8 is the number of variables that are currently being output into the structual
+    
+    D = zeros(bladeNodes,8); % 8 is the number of variables being output
     
     OO = ones(bladeNodes,1);
     Ixx = OO;
@@ -9,8 +9,8 @@ function D = Bladestruct(segLength1,segLength2,MathematicaOutputExtension,foilNa
     Area = OO;
 
     T = readtable(MathematicaOutputExtension);
-    A1 = T{1:end,foilNames{1}}; % Structural Properties of first NACA foil
-    A2 = T{1:end,foilNames{2}}; % Structural Properties of second NACA foil
+    A1 = T{1:end,foilNames{1}}; % Structural Properties of first airfoil
+    A2 = T{1:end,foilNames{2}}; % Structural Properties of second airfoil
     % Extract structuralq properties for first airfoil
     xcm1 = A1(1)*OO;
     ycm1 = A1(2)*OO;
@@ -26,8 +26,8 @@ function D = Bladestruct(segLength1,segLength2,MathematicaOutputExtension,foilNa
     Area2 = A2(5)*OO;
     m2 = A2(5)*rhoBlade*OO;
     % Develop length variable (applies to both airfoils)
-    dL = 1/bladeNodes;
-    D(:,1) = dL*OO; %Length
+    L = linspace(0,1,bladeNodes)';
+    D(:,1) = L; %Length
     % Compute Ixx at each node on the blade
     Ixx(1:segLength1) = Ixx1(1:segLength1); 
     Ixx(segLength1+1:segLength1+segLength2) = Ixx2(segLength1+1:segLength1+segLength2);
@@ -65,23 +65,17 @@ function D = Bladestruct(segLength1,segLength2,MathematicaOutputExtension,foilNa
     D(:,5) = EBlade*Area; % EA
     % Compute torsoinal stiffness
     D(:,6) = GBlade*(Ixx+Iyy); % GJ
-    
     %Compute Shear Stiffness
     D(:,7) = GBlade*Area; % GA
     % Compute Shear Factor
     D(:,9) = 0; % Shear factor in x (Qblade does not use this value)
     D(:,10) = 0;% Shear factor in y (Qblade does not use this value)
-    % When you get back, start with radius of gyration
     % Compute Structural Pitch
     D(:,8) = 0; % Structural pitch (zero for VAWTs)
-    % Compute Center of elasticity (This will change when we get BECAS running)
-    %xce = 0*OO;
-    %yce = 0*OO;
+    % Compute Center of elasticity  (xce & yce)
     D(:,15) = D(:,13);
-    D(:,16) = D(:,14); % xce and yce are equal to xc and yc for isotropic materials
-    % Compute Center of Shear (This will change when we get BECAS running)
-    %xcs = 0*OO;
-    %ycs = 0*OO;
-    D(:,17) = 0*OO/ChordLength; % these are not used by qblade so we set them equal to zero
-    D(:,18) = 0*OO/ChordLength;
+    D(:,16) = D(:,14); % xce and yce are equal to xcm and ycm for isotropic materials
+    % Compute Center of Shear (xcs & ycs)
+    D(:,17) = 0*OO/ChordLength; % Center of shear in x (QBlade does not use this value)
+    D(:,18) = 0*OO/ChordLength; % Center of shear in y (QBlade does not use this value)
 end

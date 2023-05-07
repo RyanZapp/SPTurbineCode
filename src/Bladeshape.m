@@ -1,4 +1,4 @@
-function [Chord,Twist,Circ,Height,Radius,TAxis] = Bladeshape(segLength1,segLength2,bladeNodes,H,AR,ChordLength)
+function [Chord,Twist,Circ,Height,Radius,TAxis] = Bladeshape(segLength1,segLength2,bladeNodes,H,AR,ChordLength,bladeOffset)
     S = 0.5; 
     z = linspace(0,2*H,bladeNodes)';
     R_true = H/AR;
@@ -31,11 +31,11 @@ function [Chord,Twist,Circ,Height,Radius,TAxis] = Bladeshape(segLength1,segLengt
     Twist = num2str(zeros(bladeNodes,1));
     Circ = num2str(zeros(bladeNodes,1));
     Height = num2str(0.3048*z);
-    Radius = num2str(0.3048*y_calc);
+    Radius = num2str(0.3048*(y_calc+bladeOffset));
     TAxis = num2str(S*ones(bladeNodes,1));
     
     Chord = ones(bladeNodes,1);
-    % OG numbers were 1:5, 6:29, 30:34
+    % For reference: first set of testing numbers were 1:5, 6:29, 30:34
     Chord(1:segLength1) = ChordLength*Chord(1:segLength1);
     Chord(segLength1+1:segLength1+segLength2) = ChordLength*Chord(segLength1+1:segLength1+segLength2);
     Chord(segLength1+segLength2+1:end) = ChordLength*Chord(segLength1+segLength2+1:end);

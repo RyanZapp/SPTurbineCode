@@ -1,10 +1,11 @@
 function sig = ReadHawc2Bin(FileName,path)
-% Reads binary HAWC2 results file
+% Reads binary QBlade results file
 % -------------------------------------
 % [t,sig] = ReadFlex4(FileName,Ch);
 % filename should be without extension
 % -------------------------------------
-% BSKA 26/2-2008
+% Framework inspiration - BSKA 2008
+% Framework and interfacing - Hurricane Powered Wind Turbine Team 2022
 % --------------------------------------
 ThisPath = pwd; cd(path(1,:))
 % reading scale factors from *.sel file

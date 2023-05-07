@@ -1,6 +1,7 @@
 function [finalM] = matrix_array(importfile,exportfile) % Will create an output file, but we will use csv
-
-% Courtesy of JoshTheEngineer 
+% This 38 line code segment is the only code taken from a repository
+% (i.e. this is the only segment not written in-house)
+% Courtesy of the YouTube channel: "JoshTheEngineer"
 hdrlns = 1;
 if (strcmp(importfile,'nasasc2-0714'))
     hdrlns = 3;

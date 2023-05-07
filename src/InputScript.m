@@ -71,6 +71,8 @@ bdelay = 0;
 %              segments of the blade (independent of bladeNodes)
 % segLength2 = Number of airfoul segments that made up the middle N
 %              segments of the blade (independent of bladeNodes)
+% bladeOffset = Perpendicular distance from blade ends to centerline of
+%               torque tube (ft)
 % bladeName = A name for the blade (serves no technical purpose)
 
 numBlades = 3;
@@ -78,6 +80,7 @@ bladeNodes = 34;
 ChordLength = 3;
 segLength1 = 5;
 segLength2 = 24;
+bladeOffset = 6;
 bladeName = 'NREL_5MW';
 %% Blade Structural Properties
 % Eblade = Blade modulus of elasticity (Pa)
@@ -129,7 +132,7 @@ anchorPoints = {[1,2],[3,4],[5,6]};
 
 cableTypes = 1;
 rhoCable = 1; 
-ECable = 1; % Note, this might need to be E/Area
+ECable = 1;
 RDmpCab = 1;
 CableTension = 1;
 %% Tower Shape Properties
@@ -245,4 +248,4 @@ RDmpCab,cableNodes,topConnection,topAnchor,cableTypes,ETrq,GTrq,rhoTrq,MTuneTrq,
 ODTrq,IDTrq,trqExtension,TrqLength,rhoTwr,ODTwr,IDTwr,TwrLength,ETwr,GTwr,MTuneTwr,STuneTwr, ...
 RDmpTwr,twrNodes,twrExtension,mainExtension,epsilon,gbr,gbe,ddTF,gsi,dts,dtd,mbt,bdeploy,bdelay, ...
 BladeStruct_fileName,Cable_fileName,Torquetube_fileName,Tower_fileName,TrqClear,hubPos, ...
-trqtbconn,rtrClear,bldconn,dataTypes,dataNames,HbM,HbI)
+trqtbconn,rtrClear,bldconn,dataTypes,dataNames,HbM,HbI,bladeOffset)
